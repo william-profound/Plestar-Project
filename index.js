@@ -50,19 +50,19 @@ app.post('/set_password', (req, res) => {
     bcrypt.genSalt(saltRounds, function(err, salt) {
         if (err) {
             console.error('Error generating salt:', err);
-            return;
+            res.status(200).json({response : 'error', data : [], message : "Error in updating password, Try again."});
         }
         bcrypt.hash(password, salt, function(err, hash) {
             if (err) {
                 console.error('Error hashing password:', err);
-                return;
+                res.status(200).json({response : 'error', data : [], message : "Error in updating password, Try again."});
             }
             //console.log('Hashed password:', hash);
             var updateQuery = "UPDATE employees SET password=? WHERE employeeid = ?";
             var updateValues = [hash, employeeid];
                        
             db1.query(updateQuery, updateValues, (updateErr, updateResult) => {
-                if (updateErr) {
+             if (updateErr) {
                    console.error(updateErr);
                    res.status(200).json({response : 'error', data : [], message : "Error in updating password, Try again."});
             }else if(updateResult.affectedRows){
@@ -84,14 +84,13 @@ app.post('/login', (req, res) => {
         if (checkEmployeeErr) {
             console.error('Error checking employee details:', checkEmployeeErr); 
             res.status(200).json({response : 'error', data : [], message : "Error in checking employee details, Try again."});
-            return;
         }
         if (checkEmployeeResult.length > 0) {
            //console.log(checkEmployeeResult[0].password);
            bcrypt.compare( password, checkEmployeeResult[0].password, function(err, result) {
                 if (err) {
                     console.error('Error comparing passwords:', err);
-                    return;
+                    res.status(200).json({response : 'error', data : [], message : "Error in checking employee details, Try again."});
                 }
                 if (result) {
                     console.log('Password matched!');
