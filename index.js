@@ -65,10 +65,12 @@ app.post('/set_password', (req, res) => {
                 if (updateErr) {
                    console.error(updateErr);
                    res.status(200).json({response : 'error', data : [], message : "Error in updating password, Try again."});
-            } else{
+            }else if(updateResult.affectedRows){
                    console.log('Password has been updated successfully');
                    res.status(200).json({response : 'success', data : [{'id':id,'employeeid':employeeid}], message : "Password has been updated successfully"});
-              }
+            }else{
+                  res.status(200).json({response : 'error', data : [], message : "Employee id is incorrect."});
+            }
            });
         });
     });
