@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql');
 const http = require('http');
 const app = express();
+const { select, insert, update, remove } = require('./db');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const httpServer = http.createServer(app);
@@ -10,17 +11,10 @@ app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 httpServer.listen(3000, () => {
     console.log('HTTP server is running on port 3000');
 });
-const db1 = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'plestar_inc'
-});
 app.post('/signup',(req, res) => { 
-//console.log(req.body);
     const {fullname, employeeid, mobileno } = req.body;
-    const checkQuery = "SELECT * FROM `employees` WHERE `employeeid` = ? or mobileno=?";
-    db1.query(checkQuery, [employeeid,mobileno], (checkErr, checkResult) => {
+    //const checkQuery = "SELECT * FROM `employees` WHERE `employeeid` = ? or mobileno=?";
+    select("employees",'*','`employeeid` = ? or mobileno=?',[employeeid,mobileno], (checkErr, checkResult) => {
         if (checkErr) {
             console.error(checkErr);
             res.status(200).json({response : 'error', data : [], message : "Error in checking try again"});
@@ -28,10 +22,9 @@ app.post('/signup',(req, res) => {
             if (checkResult.length > 0) {
               res.status(200).json({response : 'error', data : [], message : "Employee with same mobile number is already exists"}); 
             } else {
-                const insertQuery = "INSERT INTO `employees` (`fullname`, `employeeid`, mobileno) VALUES (?, ?, ?);";
-                const insertValues = [fullname,employeeid,mobileno];
-
-                db1.query(insertQuery, insertValues, (insertErr, insertResult) => {
+                //const insertQuery = "INSERT INTO `employees` (`fullname`, `employeeid`, mobileno) VALUES (?, ?, ?);";
+                //const insertValues = [fullname,employeeid,mobileno];
+                insert('employees', ['fullname', 'employeeid', 'mobileno'], [fullname, employeeid, mobileno], (insertErr, insertResult) => {
                     if (insertErr) {
                         console.error(insertErr);
                         res.status(200).json({response : 'error', data : [], message : "Error inserting employee details"});
@@ -58,10 +51,10 @@ app.post('/set_password', (req, res) => {
                 res.status(200).json({response : 'error', data : [], message : "Error in updating password, Try again."});
             }
             //console.log('Hashed password:', hash);
-            var updateQuery = "UPDATE employees SET password=? WHERE employeeid = ?";
-            var updateValues = [hash, employeeid];
+            //var updateQuery = "UPDATE employees SET password=? WHERE employeeid = ?";
+            //var updateValues = [hash, employeeid];
                        
-            db1.query(updateQuery, updateValues, (updateErr, updateResult) => {
+            update('employees', ['password'],'employeeid = ?',[hash,  employeeid],  (updateErr, updateResult) => {
              if (updateErr) {
                    console.error(updateErr);
                    res.status(200).json({response : 'error', data : [], message : "Error in updating password, Try again."});
@@ -69,6 +62,7 @@ app.post('/set_password', (req, res) => {
                    console.log('Password has been updated successfully');
                    res.status(200).json({response : 'success', data : [{'id':id,'employeeid':employeeid}], message : "Password has been updated successfully"});
             }else{
+                console.log(updateResult);
                   res.status(200).json({response : 'error', data : [], message : "Employee id is incorrect."});
             }
            });
@@ -78,9 +72,9 @@ app.post('/set_password', (req, res) => {
 });
 app.post('/login', (req, res) => {
     const {employeeid,password}=req.body;
-    var checkEmployeeSql = `select * from employees where employeeid=?;`;
+    //var checkEmployeeSql = `select * from employees where employeeid=?;`;
     var value=[employeeid];
-    db1.query(checkEmployeeSql, value, (checkEmployeeErr, checkEmployeeResult) => {
+    select('employees', '*', 'employeeid=?', value, (checkEmployeeErr, checkEmployeeResult) => {
         if (checkEmployeeErr) {
             console.error('Error checking employee details:', checkEmployeeErr); 
             res.status(200).json({response : 'error', data : [], message : "Error in checking employee details, Try again."});
