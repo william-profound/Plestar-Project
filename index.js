@@ -17,7 +17,7 @@ app.post('/signup',(req, res) => {
         select("employees", ['*'], '`employeeid` = ? or mobileno=?', [employeeid, mobileno], '', '', (checkErr, checkResult) => {
             if (checkErr) {
                 console.error(checkErr);
-                res.status(200).json({response : 'error', data : [], message : "Error in checking try again"});
+                res.status(200).json({response : 'error', data : [], message : "Error, try again"});
             } else {
                 if (checkResult.length > 0) {
                   res.status(200).json({response : 'error', data : [checkResult], message : "Employee with same mobile number is already exists"}); 
@@ -25,7 +25,7 @@ app.post('/signup',(req, res) => {
                     insert('employees', ['fullname', 'employeeid', 'mobileno'], [fullname, employeeid, mobileno], (insertErr, insertResult) => {
                         if (insertErr) {
                             console.error(insertErr);
-                            res.status(200).json({response : 'error', data : [], message : "Error inserting employee details"});
+                            res.status(200).json({response : 'error', data : [], message : "Error in inserting employee details"});
                         } else {
                             res.status(200).json({response : 'success', data : [{'id':insertResult.insertId,'employeeid':employeeid}], message : "Employee has been inserted successfully"});
                         }
