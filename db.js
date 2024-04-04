@@ -7,7 +7,7 @@ const db1 = mysql.createConnection({
   database: 'plestar_inc'
 });
 
-function select(tableName, columns = '*', whereCondition = '', values = [], callback) {
+function select(tableName, columns = ['*'], whereCondition = '', values = [], callback) {
   db1.query(`SELECT ${columns} FROM ${tableName} WHERE ${whereCondition}`, values, (error, results) => {
     if (error) {
       callback(error, null);
@@ -29,7 +29,6 @@ function insert(tableName, columns, values = [], callback) {
 function update(tableName, setValuesObj, whereCondition, whereValues, callback) {
   const setClause = Object.keys(setValuesObj).map(column => `${column} = ?`).join(', ');
   const setValues = Object.values(setValuesObj).flat();
-  
   db1.query(`UPDATE ${tableName} SET ${setClause} WHERE ${whereCondition}`, [...setValues, ...whereValues], (error, results) => {
     if (error) {
       callback(error, null);

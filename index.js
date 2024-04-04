@@ -14,17 +14,14 @@ httpServer.listen(3000, () => {
 app.post('/signup',(req, res) => { 
     const {fullname, employeeid, mobileno } = req.body;
     if(fullname && employeeid && mobileno){
-        //const checkQuery = "SELECT * FROM `employees` WHERE `employeeid` = ? or mobileno=?";
-        select("employees",'*','`employeeid` = ? or mobileno=?',[employeeid,mobileno], (checkErr, checkResult) => {
+        select("employees",['*'],'`employeeid` = ? or mobileno=?',[employeeid,mobileno], (checkErr, checkResult) => {
             if (checkErr) {
                 console.error(checkErr);
                 res.status(200).json({response : 'error', data : [], message : "Error in checking try again"});
             } else {
                 if (checkResult.length > 0) {
-                  res.status(200).json({response : 'error', data : [], message : "Employee with same mobile number is already exists"}); 
+                  res.status(200).json({response : 'error', data : [checkResult], message : "Employee with same mobile number is already exists"}); 
                 } else {
-                    //const insertQuery = "INSERT INTO `employees` (`fullname`, `employeeid`, mobileno) VALUES (?, ?, ?);";
-                    //const insertValues = [fullname,employeeid,mobileno];
                     insert('employees', ['fullname', 'employeeid', 'mobileno'], [fullname, employeeid, mobileno], (insertErr, insertResult) => {
                         if (insertErr) {
                             console.error(insertErr);
@@ -53,10 +50,7 @@ app.post('/set_password', (req, res) => {
                 if (err) {
                     console.error('Error hashing password:', err);
                     res.status(200).json({response : 'error', data : [], message : "Error in updating password, Try again."});
-                }
-                //console.log('Hashed password:', hash);
-                //var updateQuery = "UPDATE employees SET password=? WHERE employeeid = ?";
-                //var updateValues = [hash, employeeid];         
+                }     
                 update('employees', {'password': hash},'employeeid = ?',[employeeid],  (updateErr, updateResult) => {
                  if (updateErr) {
                        console.error(updateErr);
@@ -78,7 +72,6 @@ app.post('/set_password', (req, res) => {
 app.post('/login', (req, res) => {
     const {employeeid,password}=req.body;
     if(employeeid && password){
-        //var checkEmployeeSql = `select * from employees where employeeid=?;`;
         var value=[employeeid];
         select('employees', '*', 'employeeid=?', value, (checkEmployeeErr, checkEmployeeResult) => {
             if (checkEmployeeErr) {
@@ -86,7 +79,6 @@ app.post('/login', (req, res) => {
                 res.status(200).json({response : 'error', data : [], message : "Error in checking employee details, Try again."});
             }
             if (checkEmployeeResult.length > 0) {
-               //console.log(checkEmployeeResult[0].password);
                bcrypt.compare( password, checkEmployeeResult[0].password, function(err, result) {
                     if (err) {
                         console.error('Error comparing passwords:', err);
