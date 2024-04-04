@@ -26,9 +26,11 @@ function insert(tableName, columns, values = [], callback) {
   });
 }
 
-function update(tableName, setValues, whereCondition, Values, callback) {
-  const setClause = setValues.map(column => `${column} = ?`).join(', ');
-  db1.query(`UPDATE ${tableName} SET ${setClause} WHERE ${whereCondition}`, Values, (error, results) => {
+function update(tableName, setValuesObj, whereCondition, whereValues, callback) {
+  const setClause = Object.keys(setValuesObj).map(column => `${column} = ?`).join(', ');
+  const setValues = Object.values(setValuesObj).flat();
+  
+  db1.query(`UPDATE ${tableName} SET ${setClause} WHERE ${whereCondition}`, [...setValues, ...whereValues], (error, results) => {
     if (error) {
       callback(error, null);
     } else {
