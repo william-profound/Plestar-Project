@@ -14,7 +14,7 @@ httpServer.listen(3000, () => {
 app.post('/signup',(req, res) => { 
     const {fullname, employeeid, mobileno } = req.body;
     if(fullname && employeeid && mobileno){
-        select("employees",['*'],'`employeeid` = ? or mobileno=?',[employeeid,mobileno], (checkErr, checkResult) => {
+        select("employees", ['*'], '`employeeid` = ? or mobileno=?', [employeeid,mobileno], (checkErr, checkResult) => {
             if (checkErr) {
                 console.error(checkErr);
                 res.status(200).json({response : 'error', data : [], message : "Error in checking try again"});
@@ -51,7 +51,7 @@ app.post('/set_password', (req, res) => {
                     console.error('Error hashing password:', err);
                     res.status(200).json({response : 'error', data : [], message : "Error in updating password, Try again."});
                 }     
-                update('employees', {'password': hash},'employeeid = ?',[employeeid],  (updateErr, updateResult) => {
+                update('employees', {'password': hash}, 'employeeid = ?', [employeeid],  (updateErr, updateResult) => {
                  if (updateErr) {
                        console.error(updateErr);
                        res.status(200).json({response : 'error', data : [], message : "Error in updating password, Try again."});
