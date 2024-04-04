@@ -7,8 +7,19 @@ const db1 = mysql.createConnection({
   database: 'plestar_inc'
 });
 
-function select(tableName, columns = ['*'], whereCondition = '', values = [], callback) {
-  db1.query(`SELECT ${columns} FROM ${tableName} WHERE ${whereCondition}`, values, (error, results) => {
+function select(tableName, columns = ['*'], whereCondition = '', values = [], groupBy = '', orderBy = '', callback) {
+  let query = `SELECT ${columns.join(', ')} FROM ${tableName}`;
+  if (whereCondition) {
+    query += ` WHERE ${whereCondition}`;
+  }
+  if (groupBy) {
+    query += ` GROUP BY ${groupBy}`;
+  }
+  if (orderBy) {
+    query += ` ORDER BY ${orderBy}`;
+  }
+
+  db1.query(query, values, (error, results) => {
     if (error) {
       callback(error, null);
     } else {
@@ -16,6 +27,7 @@ function select(tableName, columns = ['*'], whereCondition = '', values = [], ca
     }
   });
 }
+
 function insert(tableName, columns, values = [], callback) {
   db1.query(`INSERT INTO ${tableName} (${columns.join(', ')}) VALUES (${values.map(() => '?').join(', ')})`, values, (error, results) => {
     if (error) {

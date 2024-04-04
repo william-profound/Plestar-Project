@@ -14,7 +14,7 @@ httpServer.listen(3000, () => {
 app.post('/signup',(req, res) => { 
     const {fullname, employeeid, mobileno } = req.body;
     if(fullname && employeeid && mobileno){
-        select("employees", ['*'], '`employeeid` = ? or mobileno=?', [employeeid, mobileno], (checkErr, checkResult) => {
+        select("employees", ['*'], '`employeeid` = ? or mobileno=?', [employeeid, mobileno], '', '', (checkErr, checkResult) => {
             if (checkErr) {
                 console.error(checkErr);
                 res.status(200).json({response : 'error', data : [], message : "Error in checking try again"});
