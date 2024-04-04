@@ -73,7 +73,7 @@ app.post('/login', (req, res) => {
     const {employeeid,password}=req.body;
     if(employeeid && password){
         var value=[employeeid];
-        select('employees', '*', 'employeeid=?', value, (checkEmployeeErr, checkEmployeeResult) => {
+        select('employees', ['*'], 'employeeid=?', value, (checkEmployeeErr, checkEmployeeResult) => {
             if (checkEmployeeErr) {
                 console.error('Error checking employee details:', checkEmployeeErr); 
                 res.status(200).json({response : 'error', data : [], message : "Error in checking employee details, Try again."});
