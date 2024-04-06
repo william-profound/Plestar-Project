@@ -27,7 +27,7 @@ app.post('/signup',(req, res) => {
                             console.error(insertErr);
                             res.status(200).json({response : 'error', data : [], message : "Error in inserting employee details"});
                         } else {
-                            res.status(200).json({response : 'success', data : [{'id':insertResult.insertId,'employeeid':employeeid}], message : "Employee has been inserted successfully"});
+                            res.status(200).json({response : 'success', data : {'id':insertResult.insertId,'employeeid':employeeid}, message : "Employee has been inserted successfully"});
                         }
                     });
                 }
@@ -57,7 +57,7 @@ app.post('/set_password', (req, res) => {
                            res.status(200).json({response : 'error', data : [], message : "Error in updating password, Try again."});
                     }else if(updateResult.affectedRows){
                            console.log('Password has been updated successfully');
-                           res.status(200).json({response : 'success', data : [{'id':id,'employeeid':employeeid}], message : "Password has been updated successfully"});
+                           res.status(200).json({response : 'success', data : {'id':id,'employeeid':employeeid}, message : "Password has been updated successfully"});
                     }else{
                         console.log(updateResult);
                           res.status(200).json({response : 'error', data : [], message : "Employee id is incorrect."});
@@ -86,7 +86,7 @@ app.post('/login', (req, res) => {
                     }
                     if (result) {
                         console.log('Password matched!');
-                        res.status(200).json({response : 'success', data : [{'id':checkEmployeeResult[0].id,'employeeid':employeeid}], message : "Employee details are correct."});
+                        res.status(200).json({response : 'success', data : {'id':checkEmployeeResult[0].id,'employeeid':employeeid}, message : "Employee details are correct."});
                     } else {
                         console.log('Password incorrect!');
                         res.status(200).json({response : 'error', data : [], message : "Password is incorrect."});
