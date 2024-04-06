@@ -8,8 +8,8 @@ const bodyParser = require('body-parser');
 const httpServer = http.createServer(app);
 app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
-httpServer.listen(3000, () => {
-    console.log('HTTP server is running on port 3000');
+httpServer.listen(3500, () => {
+    console.log('HTTP server is running on port 3500');
 });
 app.post('/signup',(req, res) => { 
     const {fullname, employeeid, mobileno } = req.body;
